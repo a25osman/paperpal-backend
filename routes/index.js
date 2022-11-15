@@ -11,31 +11,34 @@ module.exports = (db) => {
       .catch (err => console.log(err));
   })
 
-  // PUT /api/groceries/:groceries_id
+  // PUT /api/groceries/:grocery_id
   router.put("/groceries/:grocery_id", (req, res) => {
-    const item = req.body.item
-    const id = req.params.grocery_id
+    const updatedGroceryItem = req.body.item
+    const grocery_id = req.params.grocery_id
     db.query(
       `UPDATE groceries SET item = '$1' WHERE id = $2;`,
-      [item, id]
+      [updatedGroceryItem, grocery_id]
     )
   })
 
   // POST /api/groceries
   router.post("/groceries", (req, res) => {
-    const item = req.body.item
-    db.query(
-      `INSERT INTO groceries (item) VALUES($1);`,
-      [item]
-    )      
+    const newGroceryItem = req.body.groceryItem
+    db
+      .query(
+        `INSERT INTO groceries (item) VALUES($1);`,
+        [newGroceryItem]
+      )
+      .then(data => res.status(201).json(data))
+      .catch(err => res.status(500).json(err));
   })
 
-  // DELETE /api/groceries
+  // DELETE /api/groceries/:grocery_id
   router.delete("/groceries/:grocery_id", (req, res) => {
-    const id = req.params.grocery_id
+    const grocery_id = req.params.grocery_id
     db.query(
       `DELETE FROM groceries WHERE id = $1;`,
-      [id]
+      [grocery_id]
     )
   })
 
