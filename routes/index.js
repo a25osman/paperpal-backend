@@ -14,11 +14,15 @@ module.exports = (db) => {
   // PUT /api/groceries/:grocery_id
   router.put("/groceries/:grocery_id", (req, res) => {
     const updatedGroceryItem = req.body.item
+    const updatedQty = req.body.qty
     const grocery_id = req.params.grocery_id
-    db.query(
-      `UPDATE groceries SET item = '$1' WHERE id = $2;`,
-      [updatedGroceryItem, grocery_id]
-    )
+    db
+      .query(
+        `UPDATE groceries SET item = $1, qty = $2 WHERE id = $3;`,
+        [updatedGroceryItem, updatedQty, grocery_id]
+      )
+      .then(data => res.status(201).json(data))
+      .catch(err => res.status(500).json(err));
   })
 
   // POST /api/groceries
@@ -26,7 +30,7 @@ module.exports = (db) => {
     const newGroceryItem = req.body.groceryItem
     db
       .query(
-        `INSERT INTO groceries (item) VALUES($1);`,
+        `INSERT INTO groceries (item) VALUES($1) RETURNING id;`,
         [newGroceryItem]
       )
       .then(data => res.status(201).json(data))
