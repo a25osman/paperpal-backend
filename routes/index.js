@@ -25,6 +25,19 @@ module.exports = (db) => {
       .catch(err => res.status(500).json(err));
   })
 
+  // PUT /api/groceries/:grocery_id/complete
+  router.put("/groceries/:grocery_id/complete", (req, res) => {
+    const is_purchased = req.body.is_purchased;
+    const grocery_id = req.params.grocery_id;
+    db
+      .query(
+        `UPDATE groceries SET is_purchased = $1 WHERE id = $2`,
+        [!is_purchased, grocery_id]
+      )
+      .then(data => res.status(201).json(data))
+      .catch(err => res.status(500).json(err));
+  })
+
   // POST /api/groceries
   router.post("/groceries", (req, res) => {
     const newGroceryItem = req.body.groceryItem
